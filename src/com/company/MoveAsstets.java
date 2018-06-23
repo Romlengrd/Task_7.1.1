@@ -3,7 +3,7 @@ package com.company;
 import java.io.*;
 import java.util.TreeSet;
 
-class MoveAsstets extends Thread {
+class MoveAsstets {
     //private int n;
     private int[] id;
     private int[] ids;
@@ -19,8 +19,7 @@ class MoveAsstets extends Thread {
         this.file = file;
     }
 
-     private void loadFile() {
-        synchronized (this) {
+      void loadFile() {
             try (FileReader fileReader = new FileReader(file)) {
                 String[] trans;
                 String string;
@@ -86,37 +85,34 @@ class MoveAsstets extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
 
     }
 
     private Transaction[] transactions;
-    private void createAccounts() {
+    private Account[] accounts;
 
-        Account[] accounts = new Account[l];
+     void createAccounts() {
+
+        accounts = new Account[l];
 
         synchronized (this) {
-            System.out.println("Список Аккунтов:");
+            //System.out.println("Список Аккунтов:");
             for (int i = 0; i < l; i++) {
                 accounts[i] = new Account(0, ids[i]);
-                for (Transaction transaction : transactions) {
-                    if (transaction.getId() == i + 1) {
-                        accounts[i].setBalance(transaction.getBalance());
-                    }
+
                 }
-                System.out.println(accounts[i]);
+                //System.out.println(accounts[i]);
             }
 
-        }
 
     }
 
 
-    private void createTransact() {
+     void createTransact() {
         transactions = new Transaction[id.length];
 
         synchronized (this) {
-            System.out.println("Список считанных транзакций:");
+            //System.out.println("Список считанных транзакций:");
             for (int i = 0; i < id.length; i++)
                 if ((id[i] != 0) || (targetId[i] != 0) || (balance[i] != 0) || (value[i] != 0)) {
                     transactions[i] = new Transaction();
@@ -124,21 +120,38 @@ class MoveAsstets extends Thread {
                     transactions[i].setTargetId(targetId[i]);
                     transactions[i].setBalance(balance[i]);
                     transactions[i].setValue(value[i]);
-                    System.out.println(transactions[i]);
+                    //System.out.println(transactions[i]);
+                } else {
+                    System.out.println("ошибка в данных, запись #" + i);
                 }
 
         }
 
     }
 
-    @Override
-    public void run () {
+    void showResultAcc () {
+        System.out.println("Список аккаунтов");
+        for (int i = 0; i < l; i++) {
+            System.out.println(accounts[i]);
+        }
+        System.out.println();
+    }
+    void showResultTrans () {
+        System.out.println("Считанный список транзакций");
+        for (int i = 0; i < id.length; i++)
+        {
+            System.out.println(transactions[i]);
+        }
+    }
 
-        loadFile();
-        createTransact();
-        createAccounts();
-
-
+    void addBalance () {
+        for (int i = 0; i < l; i++) {
+            for (Transaction transaction : transactions) {
+                if (transaction.getId() == i + 1) {
+                    accounts[i].setBalance(transaction.getBalance());
+                }
+            }
+        }
     }
 
 
