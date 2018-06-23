@@ -1,0 +1,3 @@
+id=1 targetId=2 balance=300 value=200
+id=3 targetId=1 balance=200 value=150
+id=2 targetId=3 balance=100 value=50
